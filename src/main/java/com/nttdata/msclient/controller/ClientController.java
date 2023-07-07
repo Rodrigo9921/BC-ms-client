@@ -2,6 +2,7 @@ package com.nttdata.msclient.controller;
 
 import com.nttdata.msclient.dto.ActiveProductDto;
 import com.nttdata.msclient.dto.ClientDto;
+import com.nttdata.msclient.dto.ClientSummaryDto;
 import com.nttdata.msclient.dto.PassiveProductDto;
 import com.nttdata.msclient.service.ClientService;
 import org.springframework.http.MediaType;
@@ -123,6 +124,10 @@ public class ClientController {
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
-
+    //New funcionalities
+    @GetMapping("/{clientId}/summary")
+    public Mono<ClientSummaryDto> getClientSummary(@PathVariable String clientId) {
+        return clientService.getClientSummary(clientId);
+    }
 }
 

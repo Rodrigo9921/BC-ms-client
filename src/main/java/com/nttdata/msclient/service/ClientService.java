@@ -2,6 +2,7 @@ package com.nttdata.msclient.service;
 
 import com.nttdata.msclient.dto.ActiveProductDto;
 import com.nttdata.msclient.dto.ClientDto;
+import com.nttdata.msclient.dto.ClientSummaryDto;
 import com.nttdata.msclient.dto.PassiveProductDto;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -30,5 +31,6 @@ public interface ClientService {
     Mono<PassiveProductDto> withdraw(String clientId, String id, Double amount);
     Mono<ActiveProductDto> makePaymentC(String clientId, String id, double amount);
 
-
+    //New funcionalities
+    Mono<ClientSummaryDto> getClientSummary(String clientId);
 }

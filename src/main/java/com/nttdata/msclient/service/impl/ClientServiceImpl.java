@@ -2,6 +2,7 @@ package com.nttdata.msclient.service.impl;
 
 import com.nttdata.msclient.dto.ActiveProductDto;
 import com.nttdata.msclient.dto.ClientDto;
+import com.nttdata.msclient.dto.ClientSummaryDto;
 import com.nttdata.msclient.dto.PassiveProductDto;
 import com.nttdata.msclient.model.ActiveProduct;
 import com.nttdata.msclient.model.PassiveProduct;
@@ -98,29 +99,6 @@ public class ClientServiceImpl implements ClientService {
                 .map(ClientMapper::convertToDto);
     }
 
-
-    /*
-    @Override
-    public Mono<ClientDto> addPassiveProduct(String clientId, PassiveProductDto passiveProductDto) {
-        return clientRepository.findById(clientId)
-                .flatMap(client -> {
-                    PassiveProduct newProduct = PassiveProductMapper.convertToEntity(passiveProductDto);
-                    return Mono.just(client)
-                            .filter(c -> !client.getType().equals("Personal") || client.getPassiveProduct().size() < 3)
-                            .switchIfEmpty(Mono.error(new RuntimeException("Personal clients can have up to 3 passive products")))
-                            .filter(c -> !client.getType().equals("Business") || newProduct.getName().equals("Current Account"))
-                            .switchIfEmpty(Mono.error(new RuntimeException("Business clients can only have Current Accounts")))
-                            .filter(c -> client.getPassiveProduct().stream().noneMatch(p -> p.getName().equals(newProduct.getName())))
-                            .switchIfEmpty(Mono.error(new RuntimeException("Client already has a product of this type")))
-                            .doOnNext(c -> {
-                                client.getPassiveProduct().add(newProduct);
-                                passiveProductRepository.save(newProduct).subscribe();
-                            })
-                            .flatMap(clientRepository::save);
-                })
-                .map(ClientMapper::convertToDto);
-    }
-    */
     @Override
     public Mono<ClientDto> addActiveProduct(String clientId, ActiveProductDto activeProductDto) {
         return clientRepository.findById(clientId)
@@ -276,6 +254,22 @@ public class ClientServiceImpl implements ClientService {
                             });
                 })
                 .map(ActiveProductMapper::convertToDto);
+    }
+    //New funcionalities
+    public Mono<ClientSummaryDto> getClientSummary(String clientId) {
+        return this.getClientById(clientId)
+                .flatMap(clientDto -> {
+                    Mono<List<ActiveProductDto>> activeProductsMono = this.getActiveProductsByClient(clientId);
+                    Mono<List<PassiveProductDto>> passiveProductsMono = this.getPassiveProductsByClient(clientId);
+
+                    return Mono.zip(activeProductsMono, passiveProductsMono)
+                            .map(tuple -> {
+                                List<ActiveProductDto> activeProducts = tuple.getT1();
+                                List<PassiveProductDto> passiveProducts = tuple.getT2();
+
+                                return new ClientSummaryDto(clientDto, activeProducts, passiveProducts);
+                            });
+                });
     }
 
 }
