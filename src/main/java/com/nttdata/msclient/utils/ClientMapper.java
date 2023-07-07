@@ -34,7 +34,6 @@ public class ClientMapper {
         client.setType(clientDto.getType());
         client.setPassiveProduct(clientDto.getPassiveProducts().stream().map(PassiveProductMapper::convertToEntity).collect(Collectors.toList()));
         client.setActiveProduct(clientDto.getActiveProducts().stream().map(ActiveProductMapper::convertToEntity).collect(Collectors.toList()));
-        // ...other fields...
         return client;
     }
 }

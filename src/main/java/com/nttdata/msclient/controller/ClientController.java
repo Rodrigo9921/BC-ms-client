@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/clients")
 public class ClientController {
@@ -49,7 +51,7 @@ public class ClientController {
         return clientService.deleteClient(clientId)
                 .thenReturn(ResponseEntity.noContent().build());
     }
-
+    //Passive and Active products
     @PostMapping("/{clientId}/passiveProducts")
     public Mono<ResponseEntity<ClientDto>> addPassiveProduct(@PathVariable String clientId, @RequestBody PassiveProductDto passiveProductDto) {
         return clientService.addPassiveProduct(clientId, passiveProductDto)
@@ -64,14 +66,45 @@ public class ClientController {
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
     @GetMapping("/{clientId}/passiveProducts")
-    public Flux<PassiveProductDto> getPassiveProductsByClient(@PathVariable String clientId) {
-        return clientService.getPassiveProductsByClient(clientId);
+    public Mono<ResponseEntity<List<PassiveProductDto>>> getPassiveProductsByClient(@PathVariable String clientId) {
+        return clientService.getPassiveProductsByClient(clientId)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/{clientId}/activeProducts")
-    public Flux<ActiveProductDto> getActiveProductsByClient(@PathVariable String clientId) {
-        return clientService.getActiveProductsByClient(clientId);
+    public Mono<ResponseEntity<List<ActiveProductDto>>> getActiveProductsByClient(@PathVariable String clientId) {
+        return clientService.getActiveProductsByClient(clientId)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
+    @GetMapping("/{clientId}/activeProducts/{id}")
+    public Mono<ResponseEntity<ActiveProductDto>> getActiveProductById(@PathVariable String clientId, @PathVariable String id) {
+        return clientService.getActiveProductById(clientId, id)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
+    @GetMapping("/{clientId}/passiveProducts/{id}")
+    public Mono<ResponseEntity<PassiveProductDto>> getPassiveProductById(@PathVariable String clientId, @PathVariable String id) {
+        return clientService.getPassiveProductById(clientId, id)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
+    @PutMapping("/{clientId}/passiveProducts/{id}")
+    public Mono<ResponseEntity<ClientDto>> updatePassiveProduct(@PathVariable String clientId, @PathVariable String id, @RequestBody PassiveProductDto passiveProductDto) {
+        return clientService.updatePassiveProduct(clientId, id, passiveProductDto)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/{clientId}/activeProducts/{id}")
+    public Mono<ResponseEntity<ClientDto>> updateActiveProduct(@PathVariable String clientId, @PathVariable String id, @RequestBody ActiveProductDto activeProductDto) {
+        return clientService.updateActiveProduct(clientId, id, activeProductDto)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
+
+    //Movements
     @PostMapping("/{clientId}/passiveProducts/{id}/deposit")
     public Mono<ResponseEntity<PassiveProductDto>> deposit(@PathVariable String clientId, @PathVariable String id, @RequestBody Double amount) {
         return clientService.deposit(clientId, id, amount)
@@ -85,8 +118,8 @@ public class ClientController {
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
     @PostMapping("/{clientId}/activeProducts/{id}/payment")
-    public Mono<ResponseEntity<ActiveProductDto>> makePayment(@PathVariable String clientId, @PathVariable String id, @RequestBody double amount) {
-        return clientService.makePayment(clientId, id, amount)
+    public Mono<ResponseEntity<ActiveProductDto>> makePaymentC(@PathVariable String clientId, @PathVariable String id, @RequestBody double amount) {
+        return clientService.makePaymentC(clientId, id, amount)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }

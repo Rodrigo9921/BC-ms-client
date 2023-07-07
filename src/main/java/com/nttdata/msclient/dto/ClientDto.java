@@ -12,7 +12,7 @@ public class ClientDto {
     private String phone;
     private String email;
     private String address;
-    private String type; // Individual or Business
+    private String type; // VIP OR PYME
     private List<PassiveProductDto> passiveProducts;
     private List<ActiveProductDto> activeProducts;
 }

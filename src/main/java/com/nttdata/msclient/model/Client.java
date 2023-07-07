@@ -22,7 +22,7 @@ public class Client {
     private String phone;
     private String email;
     private String address;
-    private String type; // Personal o Empresarial
+    private String type; // VIP OR PYME
     private List<PassiveProduct> passiveProduct = new ArrayList<>();
     private List<ActiveProduct> activeProduct = new ArrayList<>();
 }
