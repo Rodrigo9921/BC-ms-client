@@ -1,0 +1,12 @@
+
+spring:
+  application:
+    name: micro-ms-client
+  config:
+    import: optional:configserver:http://localhost:8888
+  cloud:
+    config:
+      import-check:
+        enabled: true
+      enabled: true
+      label: main
